@@ -1,0 +1,29 @@
+{
+  "name": "organise-my-business",
+  "version": "1.0.0",
+  "description": "An application to manage the departments, roles, and employees in your company.",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smiller-2019/organise-my-business.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smiller-2019/organise-my-business/issues"
+  },
+  "homepage": "https://github.com/smiller-2019/organise-my-business#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.18.1",
+    "inquirer": "^8.2.4",
+    "mysql2": "^2.3.3"
+  }
+}
