@@ -73,28 +73,6 @@ const addDepartmentQuestions = [
   },
 ];
 
-// const deptChoices = async () => {
-//   const allDepartments = await db.query("SELECT id, dept_name FROM department");
-//
-// };
-
-// const addEmployeeQuestions = [
-//   {
-//     type: "input",
-//     message: "Enter first name: ",
-//     name: "roleName",
-//   },
-//   {
-//     type: "input",
-//     message: "Enter last name: ",
-//     name: "salary",
-//   },
-//   {
-//     type: "list",
-//     message: "Manager"
-//   },
-// ];
-
 const viewAllDepartments = () => {
   // Query database
   db.query("SELECT id, dept_name FROM department", function (err, results) {
@@ -145,74 +123,139 @@ const addDepartment = () => {
   });
 };
 
-const addRole = () => {
+async function addRole() {
   // Query database
-  db.query("SELECT id, dept_name FROM department", function (err, results) {
-    inquirer
-      .prompt([
-        {
-          type: "input",
-          message: "Enter the role name: ",
-          name: "roleName",
-        },
-        {
-          type: "input",
-          message: "Enter the role salary: ",
-          name: "salary",
-        },
-        {
-          type: "list",
-          message: "Select a department: ",
-          choices: results,
-        },
-      ])
-      .then((response) => {
-        //results
-      });
-  });
-  // display the main menu
-  mainMenu();
-};
 
-const addEmployee = () => {
-  // inquirer.prompt(addEmployeeQuestions).then((response) => {
-  //   console.log(response.departmentName);
+  const [departments] = await db.promise().query("SELECT * FROM department");
+  const deptChoices = departments.map(({ id, dept_name }) => ({
+    value: id,
+    name: dept_name,
+  }));
 
-  //   // Query database insert new department
-  //   db.query(
-  //     `INSERT INTO department (dept_name)
-  //   VALUES (?)`,
-  //     [response.departmentName],
-  //     function (err, results) {
-  //       console.log(err);
-  //       if (err) throw err;
-  //     }
-  //   );
-  // display the main menu
-  //   mainMenu();
-  // });
-  mainMenu();
-};
+  console.log(deptChoices);
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter the role name: ",
+        name: "roleName",
+      },
+      {
+        type: "input",
+        message: "Enter the role salary: ",
+        name: "salary",
+      },
+      {
+        type: "list",
+        message: "Select a department: ",
+        choices: deptChoices,
+        name: "selectedDeptId",
+        default: "(Move up or down to reveal more choices.)",
+      },
+    ])
+    .then(async (response) => {
+      //results
+      console.table(response);
+      //display the main menu
+      mainMenu();
+    });
+}
 
-const updateEmployee = () => {
-  // inquirer.prompt(addEmployeeQuestions).then((response) => {
-  //   console.log(response.departmentName);
+async function addEmployee() {
+  // Query database
 
-  //   // Query database insert new department
-  //   db.query(
-  //     `INSERT INTO department (dept_name)
-  //   VALUES (?)`,
-  //     [response.departmentName],
-  //     function (err, results) {
-  //       console.log(err);
-  //       if (err) throw err;
-  //     }
-  //   );
-  // display the main menu
-  //   mainMenu();
-  // });
-  mainMenu();
-};
+  const [managers] = await db.promise().query("SELECT * FROM employee");
+  const managerChoices = managers.map(({ id, first_name, last_name }) => ({
+    value: id,
+    name: first_name + " " + last_name,
+  }));
+
+  const [roles] = await db.promise().query("SELECT * FROM roles");
+  const roleChoices = roles.map(({ id, title }) => ({
+    value: id,
+    name: title,
+  }));
+
+  console.log(managerChoices);
+  console.log(roleChoices);
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Enter first name: ",
+        name: "roleName",
+      },
+      {
+        type: "input",
+        message: "Enter last name: ",
+        name: "salary",
+      },
+      {
+        type: "list",
+        message: "Select a Role: ",
+        choices: roleChoices,
+        name: "selectedRoleId",
+        default: "(Move up or down to reveal more choices.)",
+      },
+      {
+        type: "list",
+        message: "Select a Manager: ",
+        choices: managerChoices,
+        name: "selectedEmployeeId",
+        default: "(Move up or down to reveal more choices.)",
+      },
+    ])
+
+    .then(async (response) => {
+      //results
+      console.table(response);
+      //display the main menu
+      mainMenu();
+    });
+}
+
+async function updateEmployee() {
+  // Query database
+
+  const [employees] = await db.promise().query("SELECT * FROM employee");
+  const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+    value: id,
+    name: first_name + " " + last_name,
+  }));
+
+  const [roles] = await db.promise().query("SELECT * FROM roles");
+  const roleChoices = roles.map(({ id, title }) => ({
+    value: id,
+    name: title,
+  }));
+
+  console.log(employeeChoices);
+  console.log(roleChoices);
+  inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "Select a Employee: ",
+        choices: employeeChoices,
+        name: "selectedEmployeeId",
+        default: "(Move up or down to reveal more choices.)",
+      },
+      {
+        type: "list",
+        message: "Select a Role: ",
+        choices: roleChoices,
+        name: "selectedRoleId",
+        default: "(Move up or down to reveal more choices.)",
+      },
+    ])
+
+    .then(async (response) => {
+      //results
+      console.table(response);
+      //display the main menu
+      mainMenu();
+    });
+}
 
 const mainMenu = () => {
   inquirer.prompt(mainMenuQuestions).then((response) => {
