@@ -21,6 +21,21 @@ const db = mysql.createConnection({
   password: "1@am9881NE*",
   database: "business_db",
 });
+// .promise();
+
+// Query database
+// let deletedRow = 2;
+
+// db.query(
+//   `DELETE FROM favorite_books WHERE id = ?`,
+//   deletedRow,
+//   (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(result);
+//   }
+// );
 
 // Default response for any other request (Not Found)
 app.use((req, res) => {
@@ -72,7 +87,6 @@ const viewAllDepartments = () => {
 const viewAllRoles = () => {
   // Query database
   db.query("SELECT * FROM roles", function (err, results) {
-    console.log("\n");
     console.table(results);
   });
 
@@ -118,6 +132,7 @@ async function addRole() {
     name: dept_name,
   }));
 
+  console.log(deptChoices);
   inquirer
     .prompt([
       {
@@ -139,20 +154,8 @@ async function addRole() {
       },
     ])
     .then(async (response) => {
-      // Query database insert new department
-      console.log("insert into roles");
-      let sql = `INSERT INTO roles (title, salary, department_id)
-      VALUES (?);`;
-      let values = [
-        [response.roleName],
-        [response.salary],
-        [response.selectedDeptId],
-      ];
-      db.query(sql, [values], function (err, results) {
-        console.log(err);
-        if (err) throw err;
-      });
-
+      //results
+      console.table(response);
       //display the main menu
       mainMenu();
     });
@@ -173,19 +176,19 @@ async function addEmployee() {
     name: title,
   }));
 
-  // console.log(managerChoices);
-  // console.log(roleChoices);
+  console.log(managerChoices);
+  console.log(roleChoices);
   inquirer
     .prompt([
       {
         type: "input",
         message: "Enter first name: ",
-        name: "firstName",
+        name: "roleName",
       },
       {
         type: "input",
         message: "Enter last name: ",
-        name: "lastName",
+        name: "salary",
       },
       {
         type: "list",
@@ -198,26 +201,14 @@ async function addEmployee() {
         type: "list",
         message: "Select a Manager: ",
         choices: managerChoices,
-        name: "selectedManagerId",
+        name: "selectedEmployeeId",
         default: "(Move up or down to reveal more choices.)",
       },
     ])
 
     .then(async (response) => {
       //results
-      let sql = `INSERT INTO employee (first_name, last_name,  role_id, manager_id)
-      VALUES (?);`;
-      let values = [
-        [response.firstName],
-        [response.lastName],
-        [response.selectedRoleId],
-        [response.selectedManagerId],
-      ];
-      db.query(sql, [values], function (err, results) {
-        console.log(err);
-        if (err) throw err;
-      });
-
+      console.table(response);
       //display the main menu
       mainMenu();
     });
@@ -238,8 +229,8 @@ async function updateEmployee() {
     name: title,
   }));
 
-  // console.log(employeeChoices);
-  // console.log(roleChoices);
+  console.log(employeeChoices);
+  console.log(roleChoices);
   inquirer
     .prompt([
       {
@@ -260,74 +251,55 @@ async function updateEmployee() {
 
     .then(async (response) => {
       //results
-      let sql = `UPDATE employee set role_id = ${response.selectedRoleId} WHERE id = ${response.selectedEmployeeId};`;
-      db.query(sql, function (err, results) {
-        console.log(err);
-        if (err) throw err;
-      });
-      //results
-      // console.table(response);
+      console.table(response);
       //display the main menu
       mainMenu();
     });
 }
 
 const mainMenu = () => {
-  console.log("ok here 1");
-  inquirer
-    .prompt(mainMenuQuestions)
-    .then((response) => {
-      console.log("ok here 2");
-      switch (response.option) {
-        case "View all departments":
-          // ask manager questions
-          viewAllDepartments();
-          break;
+  inquirer.prompt(mainMenuQuestions).then((response) => {
+    console.log(response);
+    switch (response.option) {
+      case "View all departments":
+        // ask manager questions
+        viewAllDepartments();
+        break;
 
-        case "View all roles":
-          // ask manager questions
-          viewAllRoles();
-          break;
+      case "View all roles":
+        // ask manager questions
+        viewAllRoles();
+        break;
 
-        case "View all employees":
-          // ask manager questions
-          viewAllEmployees();
-          break;
+      case "View all employees":
+        // ask manager questions
+        viewAllEmployees();
+        break;
 
-        case "Add a department":
-          // ask manager questions
-          addDepartment();
-          break;
+      case "Add a department":
+        // ask manager questions
+        addDepartment();
+        break;
 
-        case "Add a role":
-          // ask manager questions
-          addRole();
-          break;
+      case "Add a role":
+        // ask manager questions
+        addRole();
+        break;
 
-        case "Add an employee":
-          // ask manager questions
-          addEmployee();
-          break;
+      case "Add an employee":
+        // ask manager questions
+        addEmployee();
+        break;
 
-        case "Update an employee role":
-          // ask manager questions
-          updateEmployee();
-          break;
-        case "Quit":
-          //quit menu
-          break;
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      if (error.isTtyError) {
-        // Prompt couldn't be rendered in the current environment
-        console.log(error.isTtyError);
-      } else {
-        // Something else went wrong
-        console.log(error);
-      }
-    });
+      case "Update an employee role":
+        // ask manager questions
+        updateEmployee();
+        break;
+      case "Quit":
+        //quit menu
+        break;
+    }
+  });
 };
 
 mainMenu();
